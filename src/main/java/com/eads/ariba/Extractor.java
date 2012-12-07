@@ -51,7 +51,7 @@ public class Extractor {
         step2Params.add(new BasicNameValuePair("realm", "eads-t"));
         step2Params.add(new BasicNameValuePair("AWLogFilter", "Password"));
         step2Params.add(new BasicNameValuePair("UserName", "go2egp99"));
-        step2Params.add(new BasicNameValuePair("Password", "TestAriba_14"));
+        step2Params.add(new BasicNameValuePair("Password", "toulouse15"));
 
         step2Request.setEntity(new UrlEncodedFormEntity(step2Params, HTTP.UTF_8));
 
@@ -72,7 +72,7 @@ public class Extractor {
         HttpResponse step3Response = httpClient.execute(step3Request);
         HttpEntity step3Entity = step3Response.getEntity();
         String step3Content = EntityUtils.toString(step3Entity);
-        // System.out.println(step3Content);
+        System.out.println(step3Content);
 
         pattern = Pattern.compile(".*action=\"(.*)\" name=.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -80,6 +80,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4Action = matcher.group(1);
         }
+        System.out.println("    action: " + step4Action);
 
         pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_up>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -87,6 +88,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4AwssoUp = matcher.group(1);
         }
+        System.out.println("    awsso_up: " + step4AwssoUp);
 
         pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_lu>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -94,6 +96,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4AwssoLu = matcher.group(1);
         }
+        System.out.println("    awsso_lu: " + step4AwssoLu);
 
         pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_au>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -101,6 +104,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4AwssoAu = matcher.group(1);
         }
+        System.out.println("    awsso_au: " + step4AwssoAu);
 
         pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_ka>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -108,6 +112,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4AwssoKa = matcher.group(1);
         }
+        System.out.println("    awsso_ka: " + step4AwssoKa);
 
         pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_kt>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
@@ -115,6 +120,7 @@ public class Extractor {
         if (matcher.matches()) {
             step4AwssoKt = matcher.group(1);
         }
+        System.out.println("    awsso_kt: " + step4AwssoKt);
 
         step4Action = "https://s1.ariba.com" + step4Action;
         System.out.println("Step 4: " + step4Action + " ...");

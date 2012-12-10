@@ -65,7 +65,6 @@ public class Extractor {
         if (matcher.matches()) {
             step3Url = matcher.group(1);
         }
-        step3Url = "https://s1.ariba.com" + step3Url;
 
         System.out.println("Step 3: " + step3Url + " ...");
         HttpGet step3Request = new HttpGet(step3Url);

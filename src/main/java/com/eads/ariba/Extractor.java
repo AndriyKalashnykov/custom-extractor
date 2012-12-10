@@ -71,72 +71,157 @@ public class Extractor {
         HttpResponse step3Response = httpClient.execute(step3Request);
         HttpEntity step3Entity = step3Response.getEntity();
         String step3Content = EntityUtils.toString(step3Entity);
-        System.out.println(step3Content);
 
-        pattern = Pattern.compile(".*action=\"(.*)\" name=.*", Pattern.DOTALL);
+        // action
+        pattern = Pattern.compile(".*action=\"(.*)\" id=.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4Action = "";
         if (matcher.matches()) {
             step4Action = matcher.group(1);
         }
-        System.out.println("    action: " + step4Action);
+        // System.out.println("    action: " + step4Action);
 
-        pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_up>.*", Pattern.DOTALL);
+        // awsso_ar
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_ar>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoAr = "";
+        if (matcher.matches()) {
+            step4AwssoAr = matcher.group(1);
+        }
+        // System.out.println("    awsso_ar = " + step4AwssoAr);
+
+        // awsso_lia
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_lia>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoLia = "";
+        if (matcher.matches()) {
+            step4AwssoLia = matcher.group(1);
+        }
+        // System.out.println("    awsso_lia = " + step4AwssoLia);
+
+        // awsso_up
+        pattern = Pattern.compile(".*input value=\"(.*)\" type=hidden name=awsso_up>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4AwssoUp = "";
         if (matcher.matches()) {
             step4AwssoUp = matcher.group(1);
         }
-        System.out.println("    awsso_up: " + step4AwssoUp);
+        // System.out.println("    awsso_up = " + step4AwssoUp);
 
-        pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_lu>.*", Pattern.DOTALL);
+        // awsso_ap
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_ap>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoAp = "";
+        if (matcher.matches()) {
+            step4AwssoAp = matcher.group(1);
+        }
+        // System.out.println("    awsso_ap = " + step4AwssoAp);
+
+        // awsso_lu
+        pattern = Pattern.compile(".*input value=\"(.*)\" type=hidden name=awsso_lu>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4AwssoLu = "";
         if (matcher.matches()) {
             step4AwssoLu = matcher.group(1);
         }
-        System.out.println("    awsso_lu: " + step4AwssoLu);
+        // System.out.println("    awsso_lu = " + step4AwssoLu);
 
-        pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_au>.*", Pattern.DOTALL);
+        // awsso_au
+        pattern = Pattern.compile(".*input value=\"(.*)\" type=hidden name=awsso_au>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4AwssoAu = "";
         if (matcher.matches()) {
             step4AwssoAu = matcher.group(1);
         }
-        System.out.println("    awsso_au: " + step4AwssoAu);
+        // System.out.println("    awsso_au = " + step4AwssoAu);
 
-        pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_ka>.*", Pattern.DOTALL);
+        // awsso_sl
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_sl>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoSl = "";
+        if (matcher.matches()) {
+            step4AwssoSl = matcher.group(1);
+        }
+        // System.out.println("    awsso_sl = " + step4AwssoSl);
+
+        // awsso_sw
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_sw>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoSw = "";
+        if (matcher.matches()) {
+            step4AwssoSw = matcher.group(1);
+        }
+        // System.out.println("    awsso_sw = " + step4AwssoSw);
+
+        // awsso_ia
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_ia>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoIa = "";
+        if (matcher.matches()) {
+            step4AwssoIa = matcher.group(1);
+        }
+        // System.out.println("    awsso_ia = " + step4AwssoIa);
+
+        // passwordadapter
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=passwordadapter>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4Passwordadapter = "";
+        if (matcher.matches()) {
+            step4Passwordadapter = matcher.group(1);
+        }
+        // System.out.println("    passwordadapter = " + step4Passwordadapter);
+
+        // awsso_fl
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_fl>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4AwssoFl = "";
+        if (matcher.matches()) {
+            step4AwssoFl = matcher.group(1);
+        }
+        // System.out.println("    awsso_fl = " + step4AwssoFl);
+
+        // realm
+        pattern = Pattern.compile(".*input value=\"(.*)\" type=hidden name=realm>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
+        String step4Realm = "";
+        if (matcher.matches()) {
+            step4Realm = matcher.group(1);
+        }
+        // System.out.println("    realm = " + step4Realm);
+
+        // awsso_ka
+        pattern = Pattern.compile(".*input value=\"(.*)\" type=hidden name=awsso_ka>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4AwssoKa = "";
         if (matcher.matches()) {
             step4AwssoKa = matcher.group(1);
         }
-        System.out.println("    awsso_ka: " + step4AwssoKa);
+        // System.out.println("    awsso_ka = " + step4AwssoKa);
 
-        pattern = Pattern.compile(".*input value=\"(.*)\" .* name=awsso_kt>.*", Pattern.DOTALL);
+        // awsso_kt
+        pattern = Pattern.compile(".*input value=(.*) type=hidden name=awsso_kt>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step3Content);
         String step4AwssoKt = "";
         if (matcher.matches()) {
             step4AwssoKt = matcher.group(1);
         }
-        System.out.println("    awsso_kt: " + step4AwssoKt);
+        // System.out.println("    awsso_kt = " + step4AwssoKt);
 
-        step4Action = "https://s1.ariba.com" + step4Action;
         System.out.println("Step 4: " + step4Action + " ...");
         HttpPost step4Request = new HttpPost(step4Action);
         ArrayList<NameValuePair> step4Params = new ArrayList<NameValuePair>();
-        step4Params.add(new BasicNameValuePair("awsso_ar", "true"));
-        step4Params.add(new BasicNameValuePair("awsso_lia", "ACM"));
+        step4Params.add(new BasicNameValuePair("awsso_ar", step4AwssoAr));
+        step4Params.add(new BasicNameValuePair("awsso_lia", step4AwssoLia));
         step4Params.add(new BasicNameValuePair("awsso_up", step4AwssoUp));
-        step4Params.add(new BasicNameValuePair("awsso_ap", "ACM"));
+        step4Params.add(new BasicNameValuePair("awsso_ap", step4AwssoAp));
         step4Params.add(new BasicNameValuePair("awsso_lu", step4AwssoLu));
         step4Params.add(new BasicNameValuePair("awsso_au", step4AwssoAu));
-        step4Params.add(new BasicNameValuePair("awsso_sl", "1800000"));
-        step4Params.add(new BasicNameValuePair("awsso_sw", "60000"));
-        step4Params.add(new BasicNameValuePair("awsso_ia", "true"));
-        step4Params.add(new BasicNameValuePair("passwordadapter", "PasswordAdapter1"));
-        step4Params.add(new BasicNameValuePair("awsso_fl", "1"));
-        step4Params.add(new BasicNameValuePair("realm", "eads-t"));
+        step4Params.add(new BasicNameValuePair("awsso_sl", step4AwssoSl));
+        step4Params.add(new BasicNameValuePair("awsso_sw", step4AwssoSw));
+        step4Params.add(new BasicNameValuePair("awsso_ia", step4AwssoIa));
+        step4Params.add(new BasicNameValuePair("passwordadapter", step4Passwordadapter));
+        step4Params.add(new BasicNameValuePair("awsso_fl", step4AwssoFl));
+        step4Params.add(new BasicNameValuePair("realm", step4Realm));
         step4Params.add(new BasicNameValuePair("awsso_ka", step4AwssoKa));
         step4Params.add(new BasicNameValuePair("awsso_kt", step4AwssoKt));
 
@@ -145,57 +230,73 @@ public class Extractor {
         HttpEntity step4Entity = step4Response.getEntity();
         String step4Content = EntityUtils.toString(step4Entity);
 
-        System.out.println(step4Content);
-
-        pattern = Pattern.compile(".*<a.*href='(.*)'>.*", Pattern.DOTALL);
+        // step 5 AWRedirect
+        pattern = Pattern.compile(".*<a id='AWRedirect' href='(.*)'>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step4Content);
-        String step5Url = "";
+        String step5Action = "";
         if (matcher.matches()) {
-            step5Url = matcher.group(1);
+            step5Action = matcher.group(1);
         }
-        step5Url = "https://s1.ariba.com" + step5Url;
-        System.out.println("Step 5: " + step5Url + " ...");
-        HttpGet step5Request = new HttpGet(step5Url);
+        step5Action = "https://s1.ariba.com" + step5Action;
+        System.out.println("Step 5: " + step5Action + " ...");
+
+        HttpGet step5Request = new HttpGet(step5Action);
         HttpResponse step5Response = httpClient.execute(step5Request);
         HttpEntity step5Entity = step5Response.getEntity();
         String step5Content = EntityUtils.toString(step5Entity);
 
-        System.out.println("Searching sourcing ...");
+        // System.out.println(step5Content);
 
-        pattern = Pattern.compile(".*<script>RJS.*awssk=(.*)',.*,'.*'.*</script>.*", Pattern.DOTALL);
+        //
+        // step 6
+        //
+
+        // search menu ID
+        pattern = Pattern.compile(".*<a href=\"#\" class=\"\" _mid=AMBSearch bh=PML id=(.*)>Search</a>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step5Content);
-        String step5awssk = "";
+        String step6SearchMenuId = "";
         if (matcher.matches()) {
-            step5awssk = matcher.group(1);
+            step6SearchMenuId = matcher.group(1);
         }
-        System.out.println("awssk: " + step5awssk);
+        // System.out.println("    Search Menu ID = " + step6SearchMenuId);
 
-        pattern = Pattern.compile(".*bh=PML id=(.*)>Search</a>.*", Pattern.DOTALL);
+        // sourcing project menu ID
+        pattern = Pattern.compile(".*<a id=(.*) bh=PMI class=\"mC\" href=\"#\" tabIndex=\"-1\">Sourcing Project</a>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step5Content);
-        String step5MenuId = "";
+        String step6SourcingProjectMenuId = "";
         if (matcher.matches()) {
-            step5MenuId = matcher.group(1);
+            step6SourcingProjectMenuId = matcher.group(1);
         }
-        System.out.println("menuId: " + step5MenuId);
+        // System.out.println("    Sourcing Project Menu ID = " + step6SourcingProjectMenuId);
 
-        pattern = Pattern.compile(".*<a id=(.*) bh=PMI.*>Sourcing Project</a>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step5Content);
-        String step5SubMenuId = "";
+        // awssk
+        pattern = Pattern.compile(".*awssk=(.*)&realm.*");
+        matcher = pattern.matcher(step5Action);
+        String awssk = "";
         if (matcher.matches()) {
-            step5SubMenuId = matcher.group(1);
+            awssk = matcher.group(1);
         }
-        System.out.println("subMenuId: " + step5SubMenuId);
+        // System.out.println("    awssk = " + awssk);
 
-        System.out.println("Menu browsing ...");
+        System.out.println("Step 6: https://s1.ariba.com/Sourcing/Main/aw?awii=xmlhttp&awr=9&awsl=0&awst=0&awssk=" + awssk + "&awsn=" + step6SearchMenuId + "," + step6SourcingProjectMenuId + " ...");
 
-        HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awr=4&awssk=" + step5awssk + "&awsn=" + step5MenuId + "," + step5SubMenuId
-                + "&awst=0&awsl=0&awii=xmlhttp");
+        HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awii=xmlhttp&awr=9&awsl=0&awst=0&awssk=" + awssk + "&awsn=" + step6SearchMenuId + "," + step6SourcingProjectMenuId);
         HttpResponse step6Response = httpClient.execute(step6Request);
         HttpEntity step6Entity = step6Response.getEntity();
-
         String step6Content = EntityUtils.toString(step6Entity);
 
         System.out.println(step6Content);
+
+        //
+        // step 7
+        //
+
+        // System.out.println("Step 7: Launch search");
+
+        // HttpPost step7Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        // ArrayList<NameValuePair> step7Params = new ArrayList<NameValuePair>();
+
+
 
     }
 

@@ -42,21 +42,21 @@ public class Extractor {
         // DataSet dataSet = parser.parse();
     }
 
-    public void extractWorkspace(String workspaceId) throws Exception {
+    public DefaultHttpClient authentication() throws Exception {
 
         // TODO use slf4j instead of System.out
 
         // create the HTTP client
         DefaultHttpClient httpClient = new DefaultHttpClient();
 
-        System.out.println("Step 1: Go on home page ....");
+        System.out.println("Auth Step 1: Go on home page ....");
         HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/loginPage/SSOActions?awsso_ap=ACM&awsr=true&realm=eads-t&awsso_hpk=true");
         HttpResponse step1Response = httpClient.execute(step1Request);
         HttpEntity step1Entity = step1Response.getEntity();
 
         String step1EntityContent = EntityUtils.toString(step1Entity);
 
-        System.out.println("Step 2: Get SSOActions ...");
+        System.out.println("Auth Step 2: Get SSOActions ...");
         HttpPost step2Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/ad/login/SSOActions?awr=1&realm=eads-T");
         ArrayList<NameValuePair> step2Params = new ArrayList<NameValuePair>();
         Pattern pattern = Pattern.compile(".*value=\"(.*)\" type=hidden name=ssocc>.*", Pattern.DOTALL);
@@ -95,7 +95,7 @@ public class Extractor {
             step3Url = matcher.group(1);
         }
 
-        System.out.println("Step 3: Login process and redirect ...");
+        System.out.println("Auth Step 3: Login process and redirect ...");
         HttpGet step3Request = new HttpGet(step3Url);
         HttpResponse step3Response = httpClient.execute(step3Request);
         HttpEntity step3Entity = step3Response.getEntity();
@@ -236,7 +236,7 @@ public class Extractor {
         }
         // System.out.println("    awsso_kt = " + step4AwssoKt);
 
-        System.out.println("Step 4: Redirect to workspace ...");
+        System.out.println("Auth Step 4: Redirect to workspace ...");
         HttpPost step4Request = new HttpPost(step4Action);
         ArrayList<NameValuePair> step4Params = new ArrayList<NameValuePair>();
         step4Params.add(new BasicNameValuePair("awsso_ar", step4AwssoAr));
@@ -259,7 +259,7 @@ public class Extractor {
         HttpEntity step4Entity = step4Response.getEntity();
         String step4Content = EntityUtils.toString(step4Entity);
 
-        System.out.println("Step 5: AWRedirect");
+        System.out.println("Auth Step 5: AWRedirect");
         pattern = Pattern.compile(".*<a id='AWRedirect' href='(.*)'>.*", Pattern.DOTALL);
         matcher = pattern.matcher(step4Content);
         String step5Action = "";
@@ -275,15 +275,36 @@ public class Extractor {
 
         // System.out.println(step5Content);
 
-        System.out.println("Step 6: Go on viewDocument page");
-        HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/viewDocument?realm=eads-t&ID=" + workspaceId);
-        HttpResponse step6Response = httpClient.execute(step6Request);
-        HttpEntity step6Entity = step6Response.getEntity();
-        String step6Content = EntityUtils.toString(step6Entity);
+        return httpClient;
+    }
 
-        // System.out.println(step6Content);
+    public void extractDocument(String workspaceId, String eventId, DefaultHttpClient httpClient) throws Exception {
 
-        System.out.println("Step 7: Create workspaceId folder");
+        System.out.println("Document Extract Step 1: Go on viewDocument page");
+        HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/viewDocument?realm=eads-t&ID=" + eventId);
+        HttpResponse step1Response = httpClient.execute(step1Request);
+        HttpEntity step1Entity = step1Response.getEntity();
+        String step1Content = EntityUtils.toString(step1Entity);
+
+        System.out.println(step1Content);
+
+        System.out.println("Document Extract Step 2: Generate Excel export");
+        HttpPost step2Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        ArrayList<NameValuePair> step2Params = new ArrayList<NameValuePair>();
+        step2Params.add(new BasicNameValuePair("_hsrspc", "1"));
+    }
+
+    public void extractWorkspace(String workspaceId, DefaultHttpClient httpClient) throws Exception {
+
+        System.out.println("Workspace Extract Step 1: Go on viewDocument page");
+        HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/viewDocument?realm=eads-t&ID=" + workspaceId);
+        HttpResponse step1Response = httpClient.execute(step1Request);
+        HttpEntity step1Entity = step1Response.getEntity();
+        String step1Content = EntityUtils.toString(step1Entity);
+
+        // System.out.println(step1Content);
+
+        System.out.println("Workspace Extract Step 2: Create workspaceId folder");
         File workspaceFolder = new File(workspaceId);
         if (!workspaceFolder.exists()) {
             workspaceFolder.mkdirs();
@@ -293,43 +314,43 @@ public class Extractor {
             attachmentsFolder.mkdirs();
         }
 
-        System.out.println("Step 8: Switching to Overview tab");
+        System.out.println("Workspace Extract Step 3: Switching to Overview tab");
         // extract the awssk
-        pattern = Pattern.compile(".*/Sourcing/Main/aw\\?awh=r&awssk=(.*)&realm=eads-T','/Sourcing/Main/ad/ping.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        Pattern pattern = Pattern.compile(".*/Sourcing/Main/aw\\?awh=r&awssk=(.*)&realm=eads-T','/Sourcing/Main/ad/ping.*", Pattern.DOTALL);
+        Matcher matcher = pattern.matcher(step1Content);
         String awssk = "";
         if (matcher.matches()) {
             awssk = matcher.group(1);
         }
-        HttpPost step8Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
-        ArrayList<NameValuePair> step8Params = new ArrayList<NameValuePair>();
-        step8Params.add(new BasicNameValuePair("_6sokfd", "0"));
-        step8Params.add(new BasicNameValuePair("_et2lqc", "false"));
-        step8Params.add(new BasicNameValuePair("_npf_3", "0"));
-        step8Params.add(new BasicNameValuePair("_utyjxd", "0"));
-        step8Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
-        step8Params.add(new BasicNameValuePair("awfa", "_yhm$xd"));
-        step8Params.add(new BasicNameValuePair("awfid", "true"));
-        step8Params.add(new BasicNameValuePair("awii", "xmlhttp"));
-        step8Params.add(new BasicNameValuePair("awr", "a"));
-        step8Params.add(new BasicNameValuePair("awsl", "0"));
-        step8Params.add(new BasicNameValuePair("awsn", "_hcftcc"));
-        step8Params.add(new BasicNameValuePair("awsnf", "_fmkphb"));
-        step8Params.add(new BasicNameValuePair("awst", "0"));
-        step8Params.add(new BasicNameValuePair("awssk", awssk));
-        step8Request.setEntity(new UrlEncodedFormEntity(step8Params));
-        HttpResponse step8Response = httpClient.execute(step8Request);
-        HttpEntity step8Entity = step8Response.getEntity();
-        String step8Content = EntityUtils.toString(step8Entity);
+        HttpPost step3Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        ArrayList<NameValuePair> step3Params = new ArrayList<NameValuePair>();
+        step3Params.add(new BasicNameValuePair("_6sokfd", "0"));
+        step3Params.add(new BasicNameValuePair("_et2lqc", "false"));
+        step3Params.add(new BasicNameValuePair("_npf_3", "0"));
+        step3Params.add(new BasicNameValuePair("_utyjxd", "0"));
+        step3Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
+        step3Params.add(new BasicNameValuePair("awfa", "_yhm$xd"));
+        step3Params.add(new BasicNameValuePair("awfid", "true"));
+        step3Params.add(new BasicNameValuePair("awii", "xmlhttp"));
+        step3Params.add(new BasicNameValuePair("awr", "a"));
+        step3Params.add(new BasicNameValuePair("awsl", "0"));
+        step3Params.add(new BasicNameValuePair("awsn", "_hcftcc"));
+        step3Params.add(new BasicNameValuePair("awsnf", "_fmkphb"));
+        step3Params.add(new BasicNameValuePair("awst", "0"));
+        step3Params.add(new BasicNameValuePair("awssk", awssk));
+        step3Request.setEntity(new UrlEncodedFormEntity(step3Params));
+        HttpResponse step3Response = httpClient.execute(step3Request);
+        HttpEntity step3Entity = step3Response.getEntity();
+        String step3Content = EntityUtils.toString(step3Entity);
 
-        System.out.println(step8Content);
+        // System.out.println(step3Content);
 
-        System.out.println("Step 9: Extracting from Overview tab");
+        System.out.println("Workspace Extract Step 4: Extracting from Overview tab");
         Properties overview = new Properties();
 
         // ID
         pattern = Pattern.compile(".*<tr><td height=16 width=\"1%\" nowrap=true class=project_summary_label>ID:</td><td></td>.<td style=\"padding-bottom:2px;\" nowrap=true align=left>(.*)</td></tr>.<tr><td height=16 width=\"1%\" nowrap=true class=project_summary_label>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String id = "";
         if (matcher.matches()) {
             id = matcher.group(1);
@@ -339,7 +360,7 @@ public class Extractor {
 
         // Version
         pattern = Pattern.compile(".*<td nowrap class=ffl><label for=.......>Version:</label></td>.<td class=ffi><span id=.......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\"></span></td>.<td class=ffp>..(.*)..</td>.</tr>.........<tr id=...... valign=middle bh=ROV>.<td nowrap class=ffl>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String version = "";
         if (matcher.matches()) {
             version = matcher.group(1);
@@ -349,7 +370,7 @@ public class Extractor {
 
         // Project State
         pattern = Pattern.compile(".*Project&nbsp;State:</label></td>.<td class=ffi><span id=......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\"></span></td>.<td class=ffp>.<table class=\"cueT\" cellpadding=\"0\"><tr>.<td>.(.*)..</td>.<td><div class=rr id=.......>..<a href=\"#\" class=\"hoverArrow noLine\" _mid=...... bh=PML id=.......><img alt=\"\" border=0 height=12 width=15 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\" class=cueTipIcon></a>.<div style=\"display:none;\" class=awmenu id=...... _reloc=1 _ondisplay=\"ariba.Widgets.sizeMsgDiv\\(elm\\)\">.<div><img width=\"0\" height=\"0\" border=\"0\"/></div>..<div class=rr id=.......><div awneedsLoading=true class=lazyLoading id=......>Loading.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String projectState = "";
         if (matcher.matches()) {
             projectState = matcher.group(1);
@@ -365,10 +386,30 @@ public class Extractor {
         overview.store(writer, null);
         writer.close();
 
+        System.out.println("Workspace Extract Step 5: Switching to Document tab");
+        HttpPost step5Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        ArrayList<NameValuePair> step5Params = new ArrayList<NameValuePair>();
+        step5Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "false"));
+        step5Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
+        step5Params.add(new BasicNameValuePair("awfa", "_yhm$xd"));
+        step5Params.add(new BasicNameValuePair("awii", "xmlhttp"));
+        step5Params.add(new BasicNameValuePair("awr", "6"));
+        step5Params.add(new BasicNameValuePair("awsl", "0"));
+        step5Params.add(new BasicNameValuePair("awsn", "_6lxl_d"));
+        step5Params.add(new BasicNameValuePair("awsnf", "_fmkphb"));
+        step5Params.add(new BasicNameValuePair("awssk", awssk));
+        step5Params.add(new BasicNameValuePair("awst", "0"));
+        step5Request.setEntity(new UrlEncodedFormEntity(step5Params));
+        HttpResponse step5Response = httpClient.execute(step5Request);
+        HttpEntity step5Entity = step5Response.getEntity();
+        String step5Content = EntityUtils.toString(step5Entity);
+
+        System.out.println(step5Content);
+
         /*
         // get awfa
         pattern = Pattern.compile(".*<input value=(.*) type=hidden name=awfa>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String awfa = "";
         if (matcher.matches()) {
             awfa = matcher.group(1);
@@ -376,7 +417,7 @@ public class Extractor {
         System.out.println("awfa: " + awfa);
         // get awsnf
         pattern = Pattern.compile(".*<input value=(.*) type=hidden name=awsnf>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String awsnf = "";
         if (matcher.matches()) {
             awsnf = matcher.group(1);
@@ -384,7 +425,7 @@ public class Extractor {
         System.out.println("awsnf: " + awsnf);
         // get awssk
         pattern = Pattern.compile(".*awssk=(.*)',4000,.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step6Content);
+        matcher = pattern.matcher(step1Content);
         String awssk = "";
         if (matcher.matches()) {
             awssk = matcher.group(1);
@@ -392,14 +433,14 @@ public class Extractor {
         System.out.println("awssk: " + awssk);
 
 
-        HttpPost step8Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
-        ArrayList<NameValuePair> step8Params = new ArrayList<NameValuePair>();
-        step8Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "0"));
-        step8Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
-        step8Params.add(new BasicNameValuePair("awfid", "true"));
-        step8Params.add(new BasicNameValuePair("awii", "xmlhttp"));
-        step8Params.add(new BasicNameValuePair("awr", "g"));
-        step8Params.add(new BasicNameValuePair("awsl", "0"));
+        HttpPost step3Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        ArrayList<NameValuePair> step3Params = new ArrayList<NameValuePair>();
+        step3Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "0"));
+        step3Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
+        step3Params.add(new BasicNameValuePair("awfid", "true"));
+        step3Params.add(new BasicNameValuePair("awii", "xmlhttp"));
+        step3Params.add(new BasicNameValuePair("awr", "g"));
+        step3Params.add(new BasicNameValuePair("awsl", "0"));
         */
 
         /*
@@ -433,12 +474,12 @@ public class Extractor {
 
         System.out.println("Step 6: https://s1.ariba.com/Sourcing/Main/aw?awii=xmlhttp&awr=9&awsl=0&awst=0&awssk=" + awssk + "&awsn=" + step6SearchMenuId + "," + step6SourcingProjectMenuId + " ...");
 
-        HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awii=xmlhttp&awr=9&awsl=0&awst=0&awssk=" + awssk + "&awsn=" + step6SearchMenuId + "," + step6SourcingProjectMenuId);
-        HttpResponse step6Response = httpClient.execute(step6Request);
-        HttpEntity step6Entity = step6Response.getEntity();
-        String step6Content = EntityUtils.toString(step6Entity);
+        HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awii=xmlhttp&awr=9&awsl=0&awst=0&awssk=" + awssk + "&awsn=" + step6SearchMenuId + "," + step6SourcingProjectMenuId);
+        HttpResponse step1Response = httpClient.execute(step1Request);
+        HttpEntity step1Entity = step1Response.getEntity();
+        String step1Content = EntityUtils.toString(step1Entity);
 
-        // System.out.println(step6Content);
+        // System.out.println(step1Content);
 
         //
         // Step 7: click on search
@@ -455,12 +496,14 @@ public class Extractor {
 
     public static void main(String[] args) throws Exception {
 
-        String workspaceId = "WS10418118";
+        String workspaceId = "WS10448415";
+        String eventId = "Doc19171669";
 
         Extractor extractor = new Extractor();
 
-        extractor.extractWorkspace(workspaceId);
-
+        DefaultHttpClient httpClient = extractor.authentication();
+        extractor.extractWorkspace(workspaceId, httpClient);
+        extractor.extractDocument(workspaceId, eventId, httpClient);
     }
 
 }

@@ -14,7 +14,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -405,6 +407,16 @@ public class Extractor {
         String step5Content = EntityUtils.toString(step5Entity);
 
         System.out.println(step5Content);
+
+        System.out.println("Workspace Extract Step 6: Document Excel export");
+        HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awr=c&awssk=" + awssk + "&awsn=_6a57vb&awst=0&awsl=0&awii=AWRefreshFrame");
+        HttpResponse step6Response = httpClient.execute(step6Request);
+        HttpEntity step6Entity = step6Response.getEntity();
+        byte[] step6Content = EntityUtils.toByteArray(step6Entity);
+        FileOutputStream fileOutputStream = new FileOutputStream(new File(workspaceFolder, "documents_tab_export.xls"));
+        fileOutputStream.write(step6Content);
+        fileOutputStream.flush();
+        fileOutputStream.close();
 
         /*
         // get awfa

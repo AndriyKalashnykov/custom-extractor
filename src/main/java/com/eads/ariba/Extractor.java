@@ -388,7 +388,7 @@ public class Extractor {
         overview.store(writer, null);
         writer.close();
 
-        System.out.println("Workspace Extract Step 5: Switching to Document tab");
+        System.out.println("Workspace Extract Step 5: Switching to Documents tab");
         HttpPost step5Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
         ArrayList<NameValuePair> step5Params = new ArrayList<NameValuePair>();
         step5Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "false"));
@@ -406,7 +406,7 @@ public class Extractor {
         HttpEntity step5Entity = step5Response.getEntity();
         String step5Content = EntityUtils.toString(step5Entity);
 
-        System.out.println(step5Content);
+        // System.out.println(step5Content);
 
         System.out.println("Workspace Extract Step 6: Document Excel export");
         HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awr=c&awssk=" + awssk + "&awsn=_6a57vb&awst=0&awsl=0&awii=AWRefreshFrame");
@@ -417,6 +417,26 @@ public class Extractor {
         fileOutputStream.write(step6Content);
         fileOutputStream.flush();
         fileOutputStream.close();
+
+        System.out.println("Workspace Extract Step 7: Switching to Tasks tab");
+        HttpPost step7Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
+        ArrayList<NameValuePair> step7Params = new ArrayList<NameValuePair>();
+        step7Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "false"));
+        step7Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
+        step7Params.add(new BasicNameValuePair("awfa", "_yhm$xd"));
+        step7Params.add(new BasicNameValuePair("awii", "xmlhttp"));
+        step7Params.add(new BasicNameValuePair("awr", "6"));
+        step7Params.add(new BasicNameValuePair("awsl", "0"));
+        step7Params.add(new BasicNameValuePair("awsn", "_mopijb"));
+        step7Params.add(new BasicNameValuePair("awsnf", "_fmkphb"));
+        step7Params.add(new BasicNameValuePair("awssk", awssk));
+        step7Params.add(new BasicNameValuePair("awst", "40"));
+        step7Request.setEntity(new UrlEncodedFormEntity(step7Params));
+        HttpResponse step7Response = httpClient.execute(step7Request);
+        HttpEntity step7Entity = step7Response.getEntity();
+        String step7Content = EntityUtils.toString(step7Entity);
+
+        System.out.println(step7Content);
 
         /*
         // get awfa
@@ -508,14 +528,12 @@ public class Extractor {
 
     public static void main(String[] args) throws Exception {
 
-        String workspaceId = "WS10448415";
-        String eventId = "Doc19171669";
-
         Extractor extractor = new Extractor();
 
         DefaultHttpClient httpClient = extractor.authentication();
-        extractor.extractWorkspace(workspaceId, httpClient);
-        extractor.extractDocument(workspaceId, eventId, httpClient);
+        extractor.extractWorkspace("WS10448415", httpClient);
+        // extractor.extractWorkspace("WS10449725", httpClient);
+        //extractor.extractDocument("Doc19171669", eventId, httpClient);
     }
 
 }

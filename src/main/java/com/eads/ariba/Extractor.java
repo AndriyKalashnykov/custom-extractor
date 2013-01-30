@@ -350,7 +350,7 @@ public class Extractor {
 
         // ID
         pattern = Pattern.compile(".*<tr><td height=16 width=\"1%\" nowrap=true class=project_summary_label>ID:</td><td></td>.<td style=\"padding-bottom:2px;\" nowrap=true align=left>(.*)</td></tr>.<tr><td height=16 width=\"1%\" nowrap=true class=project_summary_label>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step1Content);
+        matcher = pattern.matcher(step3Content);
         String id = "";
         if (matcher.matches()) {
             id = matcher.group(1);
@@ -359,8 +359,8 @@ public class Extractor {
         overview.put("ID", id);
 
         // Version
-        pattern = Pattern.compile(".*<td nowrap class=ffl><label for=.......>Version:</label></td>.<td class=ffi><span id=.......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\"></span></td>.<td class=ffp>..(.*)..</td>.</tr>.........<tr id=...... valign=middle bh=ROV>.<td nowrap class=ffl>.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step1Content);
+        pattern = Pattern.compile(".*<td nowrap class=ffl><label for=.......>Version:</label></td>.<td class=ffi><span id=.......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/.../cleardot.gif\"></span></td>.<td class=ffp>..(.*)..</td>.</tr>.........<tr id=...... valign=middle bh=ROV>.<td nowrap class=ffl>.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
         String version = "";
         if (matcher.matches()) {
             version = matcher.group(1);
@@ -369,8 +369,8 @@ public class Extractor {
         overview.put("Version", version.trim());
 
         // Project State
-        pattern = Pattern.compile(".*Project&nbsp;State:</label></td>.<td class=ffi><span id=......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\"></span></td>.<td class=ffp>.<table class=\"cueT\" cellpadding=\"0\"><tr>.<td>.(.*)..</td>.<td><div class=rr id=.......>..<a href=\"#\" class=\"hoverArrow noLine\" _mid=...... bh=PML id=.......><img alt=\"\" border=0 height=12 width=15 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/163/cleardot.gif\" class=cueTipIcon></a>.<div style=\"display:none;\" class=awmenu id=...... _reloc=1 _ondisplay=\"ariba.Widgets.sizeMsgDiv\\(elm\\)\">.<div><img width=\"0\" height=\"0\" border=\"0\"/></div>..<div class=rr id=.......><div awneedsLoading=true class=lazyLoading id=......>Loading.*", Pattern.DOTALL);
-        matcher = pattern.matcher(step1Content);
+        pattern = Pattern.compile(".*Project&nbsp;State:</label></td>.<td class=ffi><span id=......><img alt=\"\" border=0 height=11 width=10 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/.../cleardot.gif\"></span></td>.<td class=ffp>.<table class=\"cueT\" cellpadding=\"0\"><tr>.<td>.(.*)..</td>.<td><div class=rr id=.......>..<a href=\"#\" class=\"hoverArrow noLine\" _mid=...... bh=PML id=.......><img alt=\"\" border=0 height=12 width=15 src=\"https://s1.ariba.com/Sourcing/Main/ad/awres/eads-t/new3/.../cleardot.gif\" class=cueTipIcon></a>.<div style=\"display:none;\" class=awmenu id=...... _reloc=1 _ondisplay=\"ariba.Widgets.sizeMsgDiv\\(elm\\)\">.<div><img width=\"0\" height=\"0\" border=\"0\"/></div>..<div class=rr id=.......><div awneedsLoading=true class=lazyLoading id=......>Loading.*", Pattern.DOTALL);
+        matcher = pattern.matcher(step3Content);
         String projectState = "";
         if (matcher.matches()) {
             projectState = matcher.group(1);

@@ -9,7 +9,13 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -18,6 +24,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -49,7 +57,19 @@ public class Extractor {
         // TODO use slf4j instead of System.out
 
         // create the HTTP client
-        DefaultHttpClient httpClient = new DefaultHttpClient();
+        TrustStrategy easyStrategy = new TrustStrategy() {
+            public boolean isTrusted(X509Certificate[] chain, String authType)
+                    throws CertificateException {
+                // eh, why not?
+                return true;
+            }
+        };
+        SSLSocketFactory sf = new SSLSocketFactory(easyStrategy);
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(new Scheme("https", 443, sf));
+
+        ClientConnectionManager ccm = new ThreadSafeClientConnManager(registry);
+        DefaultHttpClient httpClient = new DefaultHttpClient(ccm);
 
         System.out.println("Auth Step 1: Go on home page ....");
         HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/loginPage/SSOActions?awsso_ap=ACM&awsr=true&realm=eads-t&awsso_hpk=true");
@@ -525,7 +545,7 @@ public class Extractor {
 
         DefaultHttpClient httpClient = extractor.authentication();
         extractor.extractWorkspace("WS10448415", httpClient);
-        extractor.extractWorkspace("WS10449725", httpClient);
+        //extractor.extractWorkspace("WS10449725", httpClient);
         //extractor.extractDocument("Doc19171669", eventId, httpClient);
     }
 

@@ -282,6 +282,8 @@ public class Extractor {
 
     public void extractDocument(String workspaceId, String eventId, DefaultHttpClient httpClient) throws Exception {
 
+        System.out.println("------");
+
         System.out.println("Document Extract Step 1: Go on viewDocument page");
         HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/viewDocument?realm=eads-t&ID=" + eventId);
         HttpResponse step1Response = httpClient.execute(step1Request);
@@ -297,6 +299,8 @@ public class Extractor {
     }
 
     public void extractWorkspace(String workspaceId, DefaultHttpClient httpClient) throws Exception {
+
+        System.out.println("------");
 
         System.out.println("Workspace Extract Step 1: Go on viewDocument page");
         HttpGet step1Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/ad/viewDocument?realm=eads-t&ID=" + workspaceId);
@@ -382,7 +386,6 @@ public class Extractor {
 
         // TODO continue the other fields
 
-        System.out.println("... store the overview properties");
         // store the overview properties
         FileWriter writer = new FileWriter(new File(workspaceFolder, "overview.properties"));
         overview.store(writer, null);
@@ -408,7 +411,7 @@ public class Extractor {
 
         // System.out.println(step5Content);
 
-        System.out.println("Workspace Extract Step 6: Document Excel export");
+        System.out.println("Workspace Extract Step 6: Documents tab Excel export");
         HttpGet step6Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awr=c&awssk=" + awssk + "&awsn=_6a57vb&awst=0&awsl=0&awii=AWRefreshFrame");
         HttpResponse step6Response = httpClient.execute(step6Request);
         HttpEntity step6Entity = step6Response.getEntity();
@@ -418,25 +421,15 @@ public class Extractor {
         fileOutputStream.flush();
         fileOutputStream.close();
 
-        System.out.println("Workspace Extract Step 7: Switching to Tasks tab");
-        HttpPost step7Request = new HttpPost("https://s1.ariba.com/Sourcing/Main/aw");
-        ArrayList<NameValuePair> step7Params = new ArrayList<NameValuePair>();
-        step7Params.add(new BasicNameValuePair("PageErrorPanelIsMinimized", "false"));
-        step7Params.add(new BasicNameValuePair("awcharset", "UTF-8"));
-        step7Params.add(new BasicNameValuePair("awfa", "_yhm$xd"));
-        step7Params.add(new BasicNameValuePair("awii", "xmlhttp"));
-        step7Params.add(new BasicNameValuePair("awr", "6"));
-        step7Params.add(new BasicNameValuePair("awsl", "0"));
-        step7Params.add(new BasicNameValuePair("awsn", "_mopijb"));
-        step7Params.add(new BasicNameValuePair("awsnf", "_fmkphb"));
-        step7Params.add(new BasicNameValuePair("awssk", awssk));
-        step7Params.add(new BasicNameValuePair("awst", "40"));
-        step7Request.setEntity(new UrlEncodedFormEntity(step7Params));
+        System.out.println("Workspace Extract Step 7: Tasks tab Excel export");
+        HttpGet step7Request = new HttpGet("https://s1.ariba.com/Sourcing/Main/aw?awr=6&awssk=" + awssk + "&awsn=_1g0fud&awst=0&awsl=0&awii=AWRefreshFrame");
         HttpResponse step7Response = httpClient.execute(step7Request);
         HttpEntity step7Entity = step7Response.getEntity();
-        String step7Content = EntityUtils.toString(step7Entity);
-
-        System.out.println(step7Content);
+        byte[] step7Content = EntityUtils.toByteArray(step7Entity);
+        fileOutputStream = new FileOutputStream(new File(workspaceFolder, "task_tab_export.xls"));
+        fileOutputStream.write(step7Content);
+        fileOutputStream.flush();
+        fileOutputStream.close();
 
         /*
         // get awfa
@@ -532,7 +525,7 @@ public class Extractor {
 
         DefaultHttpClient httpClient = extractor.authentication();
         extractor.extractWorkspace("WS10448415", httpClient);
-        // extractor.extractWorkspace("WS10449725", httpClient);
+        extractor.extractWorkspace("WS10449725", httpClient);
         //extractor.extractDocument("Doc19171669", eventId, httpClient);
     }
 
